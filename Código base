@@ -1,0 +1,73 @@
+#include <Servo.h>
+#include <LiquidCrystal_I2C.h>
+Servo base;
+Servo LI;
+Servo LD;
+Servo garra;
+int pot_base=A5;
+int pot_LI=A4;
+int pot_LD=A3;
+int pot_garra=A2;
+const int btt_fwd= 4;
+const int btt_bwd= 2;
+const int modo= 7;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+int valor1= 0;
+int valor2= 0;
+int valor3= 0;
+int valor4= 0;
+
+//definir estados
+typedef enum estados {s0, s1, s2, s3, s4} estados;
+estados estadoActual = s0;
+estados estadoFuturo = s0;
+
+void setup() {
+// Init
+lcd.init();
+lcd.backlight();
+//Configuracion de los servos
+base.attach(11);
+LI.attach(10);
+LD.attach(9);
+garra.attach(3):
+//Configuracion de los pines
+pinMode(btt_fwd, INPUT);
+pinMode(btt_bwd, INPUT);
+pinMode(modo, INPUT);
+}
+
+void loop() {
+//mapear el valor del potenciometro de 0 a 180 y escribir ese valor mapeado
+valor1 = map(analogRead(pot_base),0,1023,0,180); 
+base.write(valor1);
+valor2 = map(analogRead(pot_LI),0,1023,0,180); 
+LI.write(valor2);
+valor3 = map(analogRead(pot_LD),0,1023,0,180); 
+LD.write(valor3);
+valor4 = map(analogRead(pot_garra),0,1023,0,180); 
+garra.write(valor4);
+
+bool avance = digitalRead(btt_fwd);
+bool retroceso = digitalRead(btt_bwd);
+bool mode = digitalRead(modo);
+
+switch (estadoActual){
+    case s0: 
+      if()
+        estadoFuturo = s1;
+      break;
+    case s1:
+      estadoFuturo= s0;
+      break;
+    case s2:
+      if(codigo == HIGH)
+        estadoFuturo = s1;
+      else
+        estadoFuturo = s2;
+      break;
+  }
+
+}
