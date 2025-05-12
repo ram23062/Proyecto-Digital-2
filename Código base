@@ -22,32 +22,17 @@ const int modo= 7;
 /*LiquidCrystal lcd();*/
 
 //Prototipo de funciones
-void movimiento_manual (int valor1, int valor2, int valor3, int valor4);
-void modo();
+void movimiento (int valor1, int valor2, int valor3, int valor4);
 
-/*
-//Definición de la función de movimiento manual
-void movimiento_manual(int valor1, int valor2, int valor3, int valor4){
-valor1 = map(analogRead(pot_base),0,1023,0,180); 
-base.write(valor1);
-valor2 = map(analogRead(pot_LI),0,1023,0,180); 
-LI.write(valor2);
-valor3 = map(analogRead(pot_LD),0,1023,0,180); 
-LD.write(valor3);
-valor4 = map(analogRead(pot_garra),0,1023,0,180); 
-garra.write(valor4);
-}
-*/
-
-/*
 //Definición de la función de movimiento general
-void movimiento_manual(int valor1, int valor2, int valor3, int valor4){ 
+void movimiento (int valor1, int valor2, int valor3, int valor4){ 
 base.write(valor1);
 LI.write(valor2); 
 LD.write(valor3);
 garra.write(valor4);
 }
-*/
+
+
 
 //definir estados
 typedef enum estados {s0, s1, s2, s3, s4} estados;
@@ -55,8 +40,8 @@ estados estadoActual = s0;
 estados estadoFuturo = s0;
 
 void setup() {
-// Configuración de filas y columnas de la pantalla
-lcd.begin(16, 2);
+/*// Configuración de filas y columnas de la pantalla
+lcd.begin(16, 2);*/
 
 //Configuracion de los servos
 base.attach(11);
@@ -68,6 +53,11 @@ garra.attach(3):
 pinMode(btt_fwd, INPUT);
 pinMode(btt_bwd, INPUT);
 pinMode(modo, INPUT);
+
+val_base = map(analogRead(pot_base),0,1023,0,180); 
+val_LI = map(analogRead(pot_LI),0,1023,0,180); 
+val_LD = map(analogRead(pot_LD),0,1023,0,180); 
+val_garra = map(analogRead(pot_garra),0,1023,0,180);
 }
 
 void loop() {
@@ -75,19 +65,69 @@ bool avance = digitalRead(btt_fwd);
 bool retroceso = digitalRead(btt_bwd);
 bool mode = digitalRead(modo);
 
+
 switch (estadoActual){
     case s0: 
-      if()
-        estadoFuturo = s1;
-      break;
-    case s1:
-      estadoFuturo= s0;
-      break;
-    case s2:
-      if(codigo == HIGH)
+      if(mode==HIGH)
         estadoFuturo = s1;
       else
+        estadoFuturo = s0;
+      break;
+    case s1:
+       if(mode==LOW)
+        estadoFuturo = s0;
+       if(avance==HIGH)
         estadoFuturo = s2;
+      break;
+    case s2:
+      if(mode==LOW)
+        estadoFuturo = s0;   
+      if(avance==HIGH)
+        estadoFuturo = s3;
+       if(retroceso==HIGH)
+        estadoFuturo = s1;
+      break;
+     case s3:
+      if(mode==LOW)
+        estadoFuturo = s0;   
+      if(avance==HIGH)
+        estadoFuturo = s4;
+      if(retroceso==HIGH)
+        estadoFuturo = s2;
+      break;
+     case s4:
+      if(mode==LOW)
+        estadoFuturo = s0;   
+      if(avance==HIGH)
+        estadoFuturo = s5;
+      if(retroceso==HIGH)
+        estadoFuturo = s3;
+      break;
+     case s5:
+      if(mode==LOW)
+        estadoFuturo = s0;   
+      if(avance==HIGH)
+        estadoFuturo = s1;
+       if(retroceso==HIGH)
+        estadoFuturo = s4;
+       break;
+  }
+
+//Control de salidas según el estado actual
+  switch (estadoActual){
+    case s0:
+      movimiento (val_base, val_LI, val_LD, val_garra);
+      Serial.println("Posición del servo de la base:"val_base);
+      Serial.println("Posición del servo del lado izquierdo:"val_LI);
+      Serial.println("Posición del servo del lado derecho:"val_LD);
+      Serial.println("Posición del servo de la garra:"val_garra);
+      break;
+    case s1: 
+      movimiento (10, 30, 30, 100);
+      Serial.println("Posición del servo de la base:"val_base);
+      Serial.println("Posición del servo del lado izquierdo:"val_LI);
+      Serial.println("Posición del servo del lado derecho:"val_LD);
+      Serial.println("Posición del servo de la garra:"val_garra);
       break;
   }
 
