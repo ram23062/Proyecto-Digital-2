@@ -19,68 +19,73 @@ const int btt_fwd= 4;
 const int btt_bwd= 2;
 const int modo= 7;
 
+//Declaración de variables a utilizar
+int val_base = 0; 
+int val_LI = 0; 
+int val_LD = 0; 
+int val_garra = 0;
+
 /*LiquidCrystal lcd();*/
 
 //Prototipo de funciones
 void movimiento (int valor1, int valor2, int valor3, int valor4);
 
-//Definición de la función de movimiento general
-void movimiento (int valor1, int valor2, int valor3, int valor4){ 
-base.write(valor1);
-LI.write(valor2); 
-LD.write(valor3);
-garra.write(valor4);
-}
-
-
-
 //definir estados
-typedef enum estados {s0, s1, s2, s3, s4} estados;
+typedef enum estados {s0, s1, s2, s3, s4, s5} estados;
 estados estadoActual = s0;
 estados estadoFuturo = s0;
+
+//Temporización
+const long  tiempodeVentana= 1000;  //Tiempo que se tardará en cambiar en ms.
+unsigned long previousMillis = 0; //Almacena la última marca de tiempo para el control no bloqueante
 
 void setup() {
 /*// Configuración de filas y columnas de la pantalla
 lcd.begin(16, 2);*/
 
+// Inicialización del puerto serial
+Serial.begin(9600);
+
 //Configuracion de los servos
 base.attach(11);
 LI.attach(10);
 LD.attach(9);
-garra.attach(3):
+garra.attach(3);
 
 //Configuracion de los pines
 pinMode(btt_fwd, INPUT);
 pinMode(btt_bwd, INPUT);
 pinMode(modo, INPUT);
 
-val_base = map(analogRead(pot_base),0,1023,0,180); 
-val_LI = map(analogRead(pot_LI),0,1023,0,180); 
-val_LD = map(analogRead(pot_LD),0,1023,0,180); 
-val_garra = map(analogRead(pot_garra),0,1023,0,180);
 }
 
 void loop() {
+//Lectura del modo y botones
 bool avance = digitalRead(btt_fwd);
 bool retroceso = digitalRead(btt_bwd);
 bool mode = digitalRead(modo);
 
+//Lectura y mapeo de los potenciómetros
+val_base = map(analogRead(pot_base),0,1023,0,180); 
+val_LI = map(analogRead(pot_LI),0,1023,0,180); 
+val_LD = map(analogRead(pot_LD),0,1023,0,180); 
+val_garra = map(analogRead(pot_garra),0,1023,0,180);
 
 switch (estadoActual){
     case s0: 
       if(mode==HIGH)
-        estadoFuturo = s1;
-      else
         estadoFuturo = s0;
+      else
+        estadoFuturo = s1;
       break;
     case s1:
-       if(mode==LOW)
+       if(mode==HIGH)
         estadoFuturo = s0;
        if(avance==HIGH)
         estadoFuturo = s2;
       break;
     case s2:
-      if(mode==LOW)
+      if(mode==HIGH)
         estadoFuturo = s0;   
       if(avance==HIGH)
         estadoFuturo = s3;
@@ -88,7 +93,7 @@ switch (estadoActual){
         estadoFuturo = s1;
       break;
      case s3:
-      if(mode==LOW)
+      if(mode==HIGH)
         estadoFuturo = s0;   
       if(avance==HIGH)
         estadoFuturo = s4;
@@ -96,7 +101,7 @@ switch (estadoActual){
         estadoFuturo = s2;
       break;
      case s4:
-      if(mode==LOW)
+      if(mode==HIGH)
         estadoFuturo = s0;   
       if(avance==HIGH)
         estadoFuturo = s5;
@@ -104,7 +109,7 @@ switch (estadoActual){
         estadoFuturo = s3;
       break;
      case s5:
-      if(mode==LOW)
+      if(mode==HIGH)
         estadoFuturo = s0;   
       if(avance==HIGH)
         estadoFuturo = s1;
@@ -117,19 +122,68 @@ switch (estadoActual){
   switch (estadoActual){
     case s0:
       movimiento (val_base, val_LI, val_LD, val_garra);
-      Serial.println("Posición del servo de la base:"val_base);
-      Serial.println("Posición del servo del lado izquierdo:"val_LI);
-      Serial.println("Posición del servo del lado derecho:"val_LD);
-      Serial.println("Posición del servo de la garra:"val_garra);
+      Serial.print("Posición del servo de la base:");
+      Serial.println(val_base);
+      Serial.print("Posición del servo del lado izquierdo:");
+      Serial.println(val_LI);
+      Serial.print("Posición del servo del lado derecho:");
+      Serial.println(val_LD);
+      Serial.print("Posición del servo de la garra:");
+      Serial.println(val_garra);
       break;
     case s1: 
       movimiento (10, 30, 30, 100);
-      Serial.println("Posición del servo de la base:"val_base);
-      Serial.println("Posición del servo del lado izquierdo:"val_LI);
-      Serial.println("Posición del servo del lado derecho:"val_LD);
-      Serial.println("Posición del servo de la garra:"val_garra);
+      Serial.println("Posición del servo de la base: 10");
+      Serial.println("Posición del servo del lado izquierdo: 30");
+      Serial.println("Posición del servo del lado derecho: 30");
+      Serial.println("Posición del servo de la garra: 100");
+      break;
+    case s2: 
+      movimiento (50, 80, 80, 120);
+      Serial.println("Posición del servo de la base: 50");
+      Serial.println("Posición del servo del lado izquierdo: 80");
+      Serial.println("Posición del servo del lado derecho: 80");
+      Serial.println("Posición del servo de la garra: 120");
+      break;
+    case s3: 
+      movimiento (70, 100, 100, 45);
+      Serial.println("Posición del servo de la base: 70");
+      Serial.println("Posición del servo del lado izquierdo: 100");
+      Serial.println("Posición del servo del lado derecho: 100");
+      Serial.println("Posición del servo de la garra: 45");
+      break;
+    case s4: 
+      movimiento (30, 150, 150, 180);
+      Serial.println("Posición del servo de la base: 30");
+      Serial.println("Posición del servo del lado izquierdo: 150");
+      Serial.println("Posición del servo del lado derecho: 150");
+      Serial.println("Posición del servo de la garra: 180");
+      break;
+    case s5: 
+      movimiento (10, 75, 75, 20);
+      Serial.println("Posición del servo de la base: 10");
+      Serial.println("Posición del servo del lado izquierdo: 75");
+      Serial.println("Posición del servo del lado derecho: 75");
+      Serial.println("Posición del servo de la garra: 20");
       break;
   }
 
+// actualización de estado
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= tiempodeVentana) {
+    estadoActual = estadoFuturo;
+    previousMillis = currentMillis;
+  }
 
+//Pausa de estabilidad
+delay(1);
+
+}
+
+//Definición de la función de movimiento general
+void movimiento (int valor1, int valor2, int valor3, int valor4){ 
+base.write(valor1);
+LI.write(valor2); 
+LD.write(valor3);
+garra.write(valor4);
 }
