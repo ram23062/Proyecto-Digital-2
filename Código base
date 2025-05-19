@@ -25,7 +25,7 @@ int val_LI = 0;
 int val_LD = 0; 
 int val_garra = 0;
 
-/*LiquidCrystal lcd();*/
+LiquidCrystal lcd(0x27, 16,2);
 
 //Prototipo de funciones
 void movimiento (int valor1, int valor2, int valor3, int valor4);
@@ -40,8 +40,9 @@ const long  tiempodeVentana= 1000;  //Tiempo que se tardará en cambiar en ms.
 unsigned long previousMillis = 0; //Almacena la última marca de tiempo para el control no bloqueante
 
 void setup() {
-/*// Configuración de filas y columnas de la pantalla
-lcd.begin(16, 2);*/
+lcd.init(); //Inicializa el modulo adaptadorel cual internamente configura e inicializa el I2C y el LCD.
+lcd.begin(16, 2);
+lcd.backlight(); //Enciende la luz de fondo
 
 // Inicialización del puerto serial
 Serial.begin(9600);
@@ -122,6 +123,8 @@ switch (estadoActual){
   switch (estadoActual){
     case s0:
       movimiento (val_base, val_LI, val_LD, val_garra);
+      lcd.setCursor(5, 0);
+      lcd.print("Manual");
       Serial.print("Posición del servo de la base:");
       Serial.println(val_base);
       Serial.print("Posición del servo del lado izquierdo:");
