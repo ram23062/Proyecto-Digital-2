@@ -123,13 +123,7 @@ switch (estadoActual){
       lcd.setCursor(5, 0);
       lcd.print("Manual");
       Serial.print("Posición del servo de la base:");
-      Serial.println(val_base);
-      Serial.print("Posición del servo del lado izquierdo:");
-      Serial.println(val_LI);
-      Serial.print("Posición del servo del lado derecho:");
-      Serial.println(val_LD);
-      Serial.print("Posición del servo de la garra:");
-      Serial.println(val_garra);
+      ImprimirPosicion (val_base, val_LI, val_LD, val_garra);
       break;
     case s1: 
       movimiento (10, 30, 30, 100);
@@ -137,10 +131,7 @@ switch (estadoActual){
       lcd.print("Automatico");
       lcd.setCursor(2, 1);
       lcd.print("Posicion: 01");
-      Serial.println("Posición del servo de la base: 10");
-      Serial.println("Posición del servo del lado izquierdo: 30");
-      Serial.println("Posición del servo del lado derecho: 30");
-      Serial.println("Posición del servo de la garra: 100");
+      ImprimirPosicion (10, 30, 30, 100);
       break;
     case s2: 
       movimiento (50, 80, 80, 120);
@@ -148,10 +139,7 @@ switch (estadoActual){
       lcd.print("Automatico");
       lcd.setCursor(2, 1);
       lcd.print("Posicion: 02");
-      Serial.println("Posición del servo de la base: 50");
-      Serial.println("Posición del servo del lado izquierdo: 80");
-      Serial.println("Posición del servo del lado derecho: 80");
-      Serial.println("Posición del servo de la garra: 120");
+      ImprimirPosicion (50, 80, 80, 120);
       break;
     case s3: 
       movimiento (70, 100, 100, 45);
@@ -159,10 +147,7 @@ switch (estadoActual){
       lcd.print("Automatico");
       lcd.setCursor(2, 1);
       lcd.print("Posicion: 03");
-      Serial.println("Posición del servo de la base: 70");
-      Serial.println("Posición del servo del lado izquierdo: 100");
-      Serial.println("Posición del servo del lado derecho: 100");
-      Serial.println("Posición del servo de la garra: 45");
+      ImprimirPosicion (70, 100, 100, 45);
       break;
     case s4: 
       movimiento (30, 150, 150, 180);
@@ -170,10 +155,7 @@ switch (estadoActual){
       lcd.print("Automatico");
       lcd.setCursor(2, 1);
       lcd.print("Posicion: 04");
-      Serial.println("Posición del servo de la base: 30");
-      Serial.println("Posición del servo del lado izquierdo: 150");
-      Serial.println("Posición del servo del lado derecho: 150");
-      Serial.println("Posición del servo de la garra: 180");
+      ImprimirPosicion (30, 150, 150, 180);
       break;
     case s5: 
       movimiento (10, 75, 75, 20);
@@ -181,10 +163,7 @@ switch (estadoActual){
       lcd.print("Automatico");
       lcd.setCursor(2, 1);
       lcd.print("Posicion: 05");
-      Serial.println("Posición del servo de la base: 10");
-      Serial.println("Posición del servo del lado izquierdo: 75");
-      Serial.println("Posición del servo del lado derecho: 75");
-      Serial.println("Posición del servo de la garra: 20");
+      ImprimirPosicion (10, 75, 75, 20);
       break;
   }
 
@@ -206,4 +185,15 @@ base.write(valor1);
 LI.write(valor2); 
 LD.write(valor3);
 garra.write(valor4);
+}
+//Definición de la función de impresion de las posiciones
+void ImprimirPosicion (int pos1, int pos2, int pos3, int pos4){
+  Serial.print("Posición del servo de la base:");
+  Serial.println(pos1);
+  Serial.print("Posición del servo del lado izquierdo:");
+  Serial.println(pos2);
+  Serial.print("Posición del servo del lado derecho:");
+  Serial.println(pos3);
+  Serial.print("Posición del servo de la garra:");
+  Serial.println(pos4);
 }
