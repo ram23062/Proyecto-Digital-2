@@ -1,6 +1,6 @@
 //Exportar las librerías
 #include <Servo.h>
-#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h>
 
 //Definir los servos
 Servo base;
@@ -19,13 +19,7 @@ const int btt_fwd= 4;
 const int btt_bwd= 2;
 const int modo= 7;
 
-//Declaración de variables a utilizar
-int val_base = 0; 
-int val_LI = 0; 
-int val_LD = 0; 
-int val_garra = 0;
-
-LiquidCrystal lcd(0x27, 16,2);
+LiquidCrystal_I2C lcd(0x27, 16,2);
 
 //Prototipo de funciones
 void movimiento (int valor1, int valor2, int valor3, int valor4);
@@ -67,54 +61,56 @@ bool retroceso = digitalRead(btt_bwd);
 bool mode = digitalRead(modo);
 
 //Lectura y mapeo de los potenciómetros
-val_base = map(analogRead(pot_base),0,1023,0,180); 
-val_LI = map(analogRead(pot_LI),0,1023,0,180); 
-val_LD = map(analogRead(pot_LD),0,1023,0,180); 
-val_garra = map(analogRead(pot_garra),0,1023,0,180);
+int val_base = map(analogRead(pot_base),0,1023,0,180); 
+int val_LI = map(analogRead(pot_LI),0,1023,0,180); 
+int val_LD = map(analogRead(pot_LD),0,1023,0,180); 
+int val_garra = map(analogRead(pot_garra),0,1023,0,180);
 
 switch (estadoActual){
     case s0: 
       if(mode==HIGH)
-        estadoFuturo = s0;
-      else
         estadoFuturo = s1;
+      else if (mode==LOW)
+        estadoFuturo = s0;
       break;
     case s1:
-       if(mode==HIGH)
+       if(mode==LOW)
         estadoFuturo = s0;
-       if(avance==HIGH)
+       else if(avance==HIGH && mode==HIGH && retroceso==LOW)
         estadoFuturo = s2;
+       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
+        estadoFuturo = s5;
       break;
     case s2:
-      if(mode==HIGH)
+      if(mode==LOW)
         estadoFuturo = s0;   
-      if(avance==HIGH)
+      else if(avance==HIGH && mode==HIGH && retroceso==LOW)
         estadoFuturo = s3;
-       if(retroceso==HIGH)
+       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
         estadoFuturo = s1;
       break;
      case s3:
-      if(mode==HIGH)
+      if(mode==LOW)
         estadoFuturo = s0;   
-      if(avance==HIGH)
+     else if(avance==HIGH && mode==HIGH && retroceso==LOW)
         estadoFuturo = s4;
-      if(retroceso==HIGH)
+       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
         estadoFuturo = s2;
       break;
      case s4:
-      if(mode==HIGH)
+      if(mode==LOW)
         estadoFuturo = s0;   
-      if(avance==HIGH)
+      else if(avance==HIGH && mode==HIGH && retroceso==LOW)
         estadoFuturo = s5;
-      if(retroceso==HIGH)
+       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
         estadoFuturo = s3;
       break;
      case s5:
-      if(mode==HIGH)
+      if(mode==LOW)
         estadoFuturo = s0;   
-      if(avance==HIGH)
+      else if(avance==HIGH && mode==HIGH && retroceso==LOW)
         estadoFuturo = s1;
-       if(retroceso==HIGH)
+       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
         estadoFuturo = s4;
        break;
   }
