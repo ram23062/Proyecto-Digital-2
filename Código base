@@ -19,6 +19,13 @@ const int btt_fwd= 4;
 const int btt_bwd= 2;
 const int modo= 7;
 
+// Anti-rebote
+bool anti_avance = LOW;
+bool anti_retroceso = LOW;
+const unsigned long debounceTime = 10;  // Tiempo de pulsación válido
+unsigned long previousMillisdebounce = 0;
+
+//Configuración de la pantalla
 LiquidCrystal_I2C lcd(0x27, 16,2);
 
 //Prototipo de funciones
@@ -61,6 +68,18 @@ bool avance = digitalRead(btt_fwd);
 bool retroceso = digitalRead(btt_bwd);
 bool mode = digitalRead(modo);
 
+//Tiempos de ventana para avance y retroceso
+bool flanco_fwd = (avance == LOW && anti_avance == HIGH);
+bool flanco_bwd = (retroceso == LOW && anti_retroceso == HIGH);
+
+//Tiempo de lectura
+unsigned long currentMillisdebounce = millis();
+if (currentMillisdebounce - previousMillisdebounce >= debounceTime){
+  anti_avance = avance;
+  anti_retroceso = retroceso;
+  previousMillisdebounce = currentMillisdebounce;
+}
+
 //Lectura y mapeo de los potenciómetros
 int val_base = map(analogRead(pot_base),0,1023,0,180); 
 int val_LI = map(analogRead(pot_LI),0,1023,0,180); 
@@ -77,41 +96,41 @@ switch (estadoActual){
     case s1:
        if(mode==LOW)
         estadoFuturo = s0;
-       else if(avance==HIGH && mode==HIGH && retroceso==LOW)
+       else if(flanco_fwd==HIGH && mode==HIGH && flanco_bwd==LOW)
         estadoFuturo = s2;
-       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
+       else if(flanco_fwd==LOW && mode==HIGH && flanco_bwd==HIGH)
         estadoFuturo = s5;
       break;
     case s2:
       if(mode==LOW)
         estadoFuturo = s0;   
-      else if(avance==HIGH && mode==HIGH && retroceso==LOW)
+      else if(flanco_fwd==HIGH && mode==HIGH && flanco_bwd==LOW)
         estadoFuturo = s3;
-       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
+       else if(flanco_fwd==LOW && mode==HIGH && flanco_bwd==HIGH)
         estadoFuturo = s1;
       break;
      case s3:
       if(mode==LOW)
         estadoFuturo = s0;   
-     else if(avance==HIGH && mode==HIGH && retroceso==LOW)
+     else if(flanco_fwd==HIGH && mode==HIGH && flanco_bwd==LOW)
         estadoFuturo = s4;
-       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
+       else if(flanco_fwd==LOW && mode==HIGH && flanco_bwd==HIGH)
         estadoFuturo = s2;
       break;
      case s4:
       if(mode==LOW)
         estadoFuturo = s0;   
-      else if(avance==HIGH && mode==HIGH && retroceso==LOW)
+      else if(flanco_fwd==HIGH && mode==HIGH && flanco_bwd==LOW)
         estadoFuturo = s5;
-       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
+       else if(flanco_fwd==LOW && mode==HIGH && flanco_bwd==HIGH)
         estadoFuturo = s3;
       break;
      case s5:
       if(mode==LOW)
         estadoFuturo = s0;   
-      else if(avance==HIGH && mode==HIGH && retroceso==LOW)
+      else if(flanco_fwd==HIGH && mode==HIGH && flanco_bwd==LOW)
         estadoFuturo = s1;
-       else if(avance==LOW && mode==HIGH && retroceso==HIGH)
+       else if(flanco_fwd==LOW && mode==HIGH && flanco_bwd==HIGH)
         estadoFuturo = s4;
        break;
   }
