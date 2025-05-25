@@ -25,6 +25,10 @@ bool anti_retroceso = LOW;
 const unsigned long debounceTime = 10;  // Tiempo de pulsación válido
 unsigned long previousMillisdebounce = 0;
 
+//Tiempo de impresión
+const unsigned long serialPrintInterval = 1000;
+unsigned long previousSerialPrint = 0;
+
 //Configuración de la pantalla
 LiquidCrystal_I2C lcd(0x27, 16,2);
 
@@ -191,6 +195,8 @@ garra.write(valor4);
 }
 //Definición de la función de impresion de las posiciones
 void ImprimirPosicion (int pos1, int pos2, int pos3, int pos4){
+unsigned long currentMillis = millis();
+  if (currentMillis - previousSerialPrint >= serialPrintInterval){
   Serial.print("Posición del servo de la base:");
   Serial.println(pos1);
   Serial.print("Posición del servo del lado izquierdo:");
@@ -199,6 +205,8 @@ void ImprimirPosicion (int pos1, int pos2, int pos3, int pos4){
   Serial.println(pos3);
   Serial.print("Posición del servo de la garra:");
   Serial.println(pos4);
+  previousSerialPrint = currentMillis;
+  }
 }
 void imprimirLCD (String mode, int est){
   lcd.setCursor(3, 0);
