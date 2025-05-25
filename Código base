@@ -31,6 +31,7 @@ LiquidCrystal_I2C lcd(0x27, 16,2);
 //Prototipo de funciones
 void movimiento (int valor1, int valor2, int valor3, int valor4);
 void ImprimirPosicion (int pos1, int pos2, int pos3, int pos4);
+void imprimirLCD (String mode, int est);
 
 //definir estados
 typedef enum estados {s0, s1, s2, s3, s4, s5} estados;
@@ -139,49 +140,32 @@ switch (estadoActual){
   switch (estadoActual){
     case s0:
       movimiento (val_base, val_LI, val_LD, val_garra);
-      lcd.setCursor(5, 0);
-      lcd.print("Manual");
-      Serial.print("Posición del servo de la base:");
+      imprimirLCD ("  Manual  ", 0);
       ImprimirPosicion (val_base, val_LI, val_LD, val_garra);
       break;
     case s1: 
       movimiento (10, 30, 30, 100);
-      lcd.setCursor(3, 0);
-      lcd.print("Automatico");
-      lcd.setCursor(2, 1);
-      lcd.print("Posicion: 01");
+      imprimirLCD ("Automatico", 1);
       ImprimirPosicion (10, 30, 30, 100);
       break;
     case s2: 
       movimiento (50, 80, 80, 120);
-      lcd.setCursor(3, 0);
-      lcd.print("Automatico");
-      lcd.setCursor(2, 1);
-      lcd.print("Posicion: 02");
+      imprimirLCD ("Automatico", 2);
       ImprimirPosicion (50, 80, 80, 120);
       break;
     case s3: 
       movimiento (70, 100, 100, 45);
-      lcd.setCursor(3, 0);
-      lcd.print("Automatico");
-      lcd.setCursor(2, 1);
-      lcd.print("Posicion: 03");
+      imprimirLCD ("Automatico", 3);
       ImprimirPosicion (70, 100, 100, 45);
       break;
     case s4: 
       movimiento (30, 150, 150, 180);
-      lcd.setCursor(3, 0);
-      lcd.print("Automatico");
-      lcd.setCursor(2, 1);
-      lcd.print("Posicion: 04");
+      imprimirLCD ("Automatico", 4);
       ImprimirPosicion (30, 150, 150, 180);
       break;
     case s5: 
       movimiento (10, 75, 75, 20);
-      lcd.setCursor(3, 0);
-      lcd.print("Automatico");
-      lcd.setCursor(2, 1);
-      lcd.print("Posicion: 05");
+      imprimirLCD ("Automatico", 5);
       ImprimirPosicion (10, 75, 75, 20);
       break;
   }
@@ -215,4 +199,12 @@ void ImprimirPosicion (int pos1, int pos2, int pos3, int pos4){
   Serial.println(pos3);
   Serial.print("Posición del servo de la garra:");
   Serial.println(pos4);
+}
+void imprimirLCD (String mode, int est){
+  lcd.setCursor(3, 0);
+  lcd.print(mode);
+  lcd.setCursor(2, 1);
+  lcd.print("Posicion:");
+  lcd.setCursor(13, 1);
+  lcd.print(est);
 }
