@@ -205,6 +205,7 @@ unsigned long currentMillis = millis();
   Serial.println(pos3);
   Serial.print("Posición del servo de la garra:");
   Serial.println(pos4);
+  Serial.println("----------------------");
   previousSerialPrint = currentMillis;
   }
 }
